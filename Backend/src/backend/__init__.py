@@ -20,5 +20,5 @@ def list_notes():
     return jsonify([Note(note["text"], note["id"], note["last_edited_date"]).to_dict() for note in all_notes])
 
 def main() -> None:
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
 
