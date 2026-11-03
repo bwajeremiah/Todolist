@@ -39,6 +39,20 @@ def deleteNote(id):
     if result.deleted_count == 0:
         return jsonify({"error": "Note not found"}), 404
     return jsonify({"message": "Note deleted successfully"})
+@app.patch("/api/notes/edit")
+def edit_note():
+    data = request.get_json()
+    note_id = data.get("id")
+    new_text = data.get("text")
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    result = notes.update_one(
+        {"id": note_id},
+        {"$set": {"text": new_text, "last_edited_date": current_time}}
+    )
+    if result.modified_count == 0:
+        return jsonify({"error": "Note not found"}), 404
+    updated_note = notes.find_one({"id": note_id})
+    return jsonify(updated_note)
 def main() -> None:
     app.run(debug=True, port=8000)
 

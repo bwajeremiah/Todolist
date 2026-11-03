@@ -4,6 +4,8 @@ const notesData = ref([])
 const errorMessage = ref('')
 const newNoteText = ref('')
 const selectDelete = ref('')
+const editNoteText = ref('')
+const editNoteId = ref('')
 async function fetchNotes() {
   errorMessage.value = ''
 
@@ -56,6 +58,24 @@ async function deleteNote(id) {
     errorMessage.value = error instanceof Error ? error.message : 'Unable to delete note'
   }
 }
+async function editNote() {
+  errorMessage.value = ''
+  try {
+    const response = await fetch('/api/notes/edit', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: Number(editNoteId.value), text: editNoteText.value })
+    })
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`)
+    }
+    await fetchNotes()
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Unable to edit note'
+  }
+}
 </script>
 
 <template>
@@ -69,6 +89,9 @@ async function deleteNote(id) {
   <p v-else>No notes loaded yet.</p>
   <input v-model="newNoteText" placeholder="Enter a new note"></input>
   <button @click="addAndShowNote">Add Note</button>
+  <input v-model="editNoteId" placeholder="Enter the ID of the note to edit"></input>
+  <input v-model="editNoteText" placeholder="Enter the new text for the note"></input>
+   <button @click="editNote">Edit Note</button>
   <input v-model="selectDelete" placeholder="Enter the ID of the note to delete">
   <button @click="deleteNote(selectDelete)">Delete</button>
 </template>
