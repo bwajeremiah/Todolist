@@ -33,6 +33,12 @@ def add_note():
     }
     notes.insert_one(new_note)
     return jsonify(new_note)
+@app.delete("/api/notes/<int:id>")
+def deleteNote(id):
+    result = notes.delete_one({"id": id})
+    if result.deleted_count == 0:
+        return jsonify({"error": "Note not found"}), 404
+    return jsonify({"message": "Note deleted successfully"})
 def main() -> None:
     app.run(debug=True, port=8000)
 

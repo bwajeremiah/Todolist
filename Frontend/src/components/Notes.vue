@@ -3,6 +3,7 @@ import { ref } from 'vue'
 const notesData = ref([])
 const errorMessage = ref('')
 const newNoteText = ref('')
+const selectDelete = ref('')
 async function fetchNotes() {
   errorMessage.value = ''
 
@@ -32,10 +33,28 @@ async function addNote() {
     }
 
     notesData.value = await response.json()
+    newNoteText.value = ''
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Unable to add note'
   }
-  newNoteText.value = ''
+}
+async function addAndShowNote() {
+  await addNote()
+  await fetchNotes()
+}
+async function deleteNote(id) {
+  errorMessage.value = ''
+  try {
+    const response = await fetch(`/api/notes/${id}`, {
+      method: 'DELETE'
+    })
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`)
+    }
+    await fetchNotes()
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Unable to delete note'
+  }
 }
 </script>
 
@@ -49,5 +68,7 @@ async function addNote() {
   </ul>
   <p v-else>No notes loaded yet.</p>
   <input v-model="newNoteText" placeholder="Enter a new note"></input>
-  <button @click="addNote">Add Note</button>
+  <button @click="addAndShowNote">Add Note</button>
+  <input v-model="selectDelete" placeholder="Enter the ID of the note to delete">
+  <button @click="deleteNote(selectDelete)">Delete</button>
 </template>
