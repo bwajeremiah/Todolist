@@ -24,7 +24,8 @@ def get_note_count():
     return jsonify({"count": count})
 @app.post("/api/notes")
 def add_note():
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    from datetime import datetime
+    current_time = datetime.now().strftime("%#m-%#d-%Y %#I:%M:%S")
     data = request.get_json()
     new_note = {
         "text": data.get("text"),
@@ -44,7 +45,8 @@ def edit_note():
     data = request.get_json()
     note_id = data.get("id")
     new_text = data.get("text")
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    from datetime import datetime
+    current_time = datetime.now().strftime("%#m-%#d-%Y %#I:%M:%S")
     result = notes.update_one(
         {"id": note_id},
         {"$set": {"text": new_text, "last_edited_date": current_time}}
