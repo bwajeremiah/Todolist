@@ -76,6 +76,10 @@ async function editNote() {
     errorMessage.value = error instanceof Error ? error.message : 'Unable to edit note'
   }
 }
+async function editAndshow() {
+  await editNote()
+  await fetchNotes()
+}
 </script>
 
 <template>
@@ -91,7 +95,7 @@ async function editNote() {
   <button @click="addAndShowNote">Add Note</button>
   <input v-model="editNoteId" placeholder="Enter the ID of the note to edit"></input>
   <input v-model="editNoteText" placeholder="Enter the new text for the note"></input>
-   <button @click="editNote">Edit Note</button>
+   <button @click="editAndshow">Edit Note</button>
   <input v-model="selectDelete" placeholder="Enter the ID of the note to delete">
   <button @click="deleteNote(selectDelete)">Delete</button>
 </template>
